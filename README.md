@@ -1,19 +1,19 @@
-CBNA_forum_analysis
--------------------
-
-A set of functions for *download*, *parse* and *transform* phpbb forums.
-
-*Clone : *
+##### Clone the project
 ```bash
-git clone git@github.com:ArthurSonzogni/CBNA_PHPBB_Analysis.git --recursive
+git clone https://github.com/ArthurSonzogni/CBNA_PHPBB_Analysis --recursive
 ```
 
+CBNA_forum_analysis
+===================
 
+A set of functions to **download**, **parse** and **transform** PHPBB forums.
 
 Dependencies
 ------------
 
 * libcurl
+* cmake
+* c++ compiler
 
 Hidden dependencies
 -------------------
@@ -22,9 +22,19 @@ Hidden dependencies
 * gumbo-query
 
 theses dependencies are git-downloaded (submodules)
-If you fail to clone the repository with theses submodules, you can type : 
+If you fail to clone the repository recursively, you can type : 
 
 ```bash
 git submodule init
 git submodule update
+```
+
+Build
+-----
+```bash
+mkdir build
+cd build
+cmake ..
+make
+./importer
 ```
