@@ -5,8 +5,8 @@
 
 struct RawMessage
 {
-    std::wstring author;
-    std::wstring content;
-}
+    std::string author;
+    std::string content;
+};
 
 #endif /* end of include guard: RAWMESSAGE_H */

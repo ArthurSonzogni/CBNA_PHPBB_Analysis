@@ -10,8 +10,15 @@
 #include "gumbo-query/src/Node.h"
 
 
+#include "parse/TopicParser.hpp"
+
 int main(int argc, char** argv)
 {
+    TopicParser topicParser("cbna.forumactif.com");
+    topicParser.parse(13368);
+    return EXIT_SUCCESS;
+
+
     HTTPDownloader downloader;
 		std::string content = downloader.download("http://cbna.forumactif.com/t13178p60-le-nouveau-cbna");
     //std::string content = downloader.download("http://arthursonzogni.com")

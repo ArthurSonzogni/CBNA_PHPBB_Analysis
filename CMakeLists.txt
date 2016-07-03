@@ -27,6 +27,7 @@ target_link_libraries(importer PUBLIC
 		gumbo-query
 		gumbo-parser
 )
+include_directories(src)
 
 # ENABLE(c++11)
 set_property(TARGET importer PROPERTY CXX_STANDARD 11)

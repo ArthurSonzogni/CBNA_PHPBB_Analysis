@@ -28,6 +28,10 @@ HTTPDownloader::~HTTPDownloader() {
     curl_easy_cleanup(curl);
 }
 
+
+#include <chrono>
+#include <thread>
+
 string HTTPDownloader::download(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     /* example.com is redirected, so we tell libcurl to follow redirection */
@@ -44,5 +48,10 @@ string HTTPDownloader::download(const std::string& url) {
         fprintf(stderr, "curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
     }
+
+    // sleep for 3s
+    std::this_thread::sleep_for (std::chrono::seconds(3));
+
+
     return out.str();
 }

@@ -6,7 +6,7 @@
 
 struct RawTopic
 {
-    std::wstring title
+    std::string title;
     std::vector<RawMessage> messages;
 };
 
