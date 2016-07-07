@@ -50,7 +50,7 @@ string HTTPDownloader::download(const std::string& url) {
     }
 
     // sleep for 3s
-    std::this_thread::sleep_for (std::chrono::seconds(3));
+    //std::this_thread::sleep_for (std::chrono::seconds(3));
 
 
     return out.str();
