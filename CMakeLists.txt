@@ -8,16 +8,19 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
 
-# Build Cumbo-parser
+# Build Gumbo-parser
 file(GLOB_RECURSE source-gumbo-parser "lib/gumbo-parser/src/*.c")
 add_library(gumbo-parser ${source-gumbo-parser})
 
-# Build Cumbo-parser
+# Build Gumbo-parser
 file(GLOB_RECURSE source-gumbo-query "lib/gumbo-query/src/*.cpp")
 add_library(gumbo-query ${source-gumbo-query})
 target_include_directories(gumbo-query PUBLIC "lib/gumbo-parser/src")
 include_directories("lib")
 
+# LIB(nlohman/json)
+### Nothing to do, simply include lib/src/json.hpp with :
+### include <json.hpp>
 
 # EXECUTABLE(importer)
 file(GLOB_RECURSE source "src/*.cpp")

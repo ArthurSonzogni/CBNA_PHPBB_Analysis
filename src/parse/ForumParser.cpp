@@ -1,6 +1,10 @@
 #include "ForumParser.hpp"
 #include "TopicParser.hpp"
 
+#include <fstream>
+
+using JSON = nlohmann::json;
+
 ForumParser::ForumParser(const std::string& website):
     website(website)
 {
@@ -13,13 +17,19 @@ bool ForumParser::parse()
 
     int fail_allowed_max = 10;
     int fail_allowed = fail_allowed_max;
-    for(int topic_id = 1; /*break below*/; ++topic_id)
+    for(int topic_id = 13000; /*break below*/; ++topic_id)
     {
         if (topicParser.parse(topic_id))
         {
             found_something = true;
             rawForum.topics.push_back(topicParser.toRaw());
             fail_allowed = fail_allowed_max;
+
+            // write topic
+            JSON json;
+            topicParser.toRaw().write(json);
+            std::ofstream file("output_" + std::to_string(topic_id));
+            file << std::setw(4) << json;
         }
         else
         {
