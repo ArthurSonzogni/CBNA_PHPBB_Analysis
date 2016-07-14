@@ -14,12 +14,11 @@ TopicParser::TopicParser(const std::string& website):
 
 bool TopicParser::parse(const int topic_id)
 {
-    raw_topic.path.clear();
+    raw_topic.id = topic_id;
     raw_topic.messages.clear();
     for(int page = 0; /*breaked below*/; /*multi-incremented below*/)
     {
         const std::string page_name = "http://" + website + "/t" + std::to_string(topic_id) + "p" + std::to_string(page) +  "-title";
-        //std::cout << "parsing : " << page_name << std::endl;
 
         // download the topic
         HTTPDownloader downloader;
@@ -34,21 +33,8 @@ bool TopicParser::parse(const int topic_id)
         // parse first page data
         if (page == 0)
         {
-            // parse title
-            CSelection title = doc.find(".cattitle");
-            if (title.nodeNum() == 0) return false;
-            raw_topic.title = title.nodeAt(0).text();
-
-            // parse path
-            CSelection path = doc.find("a.nav span");
-            for(int j = 0; j<path.nodeNum(); ++j)
-            {
-                //std::cout << j << path.nodeAt(j).text() << std::endl;
-                raw_topic.path.push_back(path.nodeAt(j).text());
-                if (j>=2) break;
-            }
-            // display path/name
-            std::cout << topic_id << " | " << raw_topic.title << std::endl;
+            if (!parseFirstPage(doc))
+                return false;
         }
 
         // parse post
@@ -73,7 +59,32 @@ bool TopicParser::parse(const int topic_id)
     return raw_topic.messages.size();
 }
 
+bool TopicParser::parseFirstPage(CDocument& doc)
+{
+    // parse title
+    CSelection title = doc.find(".cattitle");
+    if (title.nodeNum() == 0) return false;
+    raw_topic.title = title.nodeAt(0).text();
+    std::cout << raw_topic.id << " | " << raw_topic.title << std::endl;
+
+    // parse path
+    CSelection path = doc.find("a.nav span");
+    raw_topic.path.clear();
+    for(int j = 0; j<path.nodeNum(); ++j)
+    {
+        //std::cout << j << path.nodeAt(j).text() << std::endl;
+        raw_topic.path.push_back(path.nodeAt(j).text());
+        if (j>=2) break;
+    }
+    return true;
+}
+
 RawTopic TopicParser::toRaw()
 {
     return raw_topic;
+}
+
+
+void TopicParser::reload(const std::string& directory)
+{
 }

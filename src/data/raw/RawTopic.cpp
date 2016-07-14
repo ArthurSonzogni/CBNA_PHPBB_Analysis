@@ -17,6 +17,8 @@ void RawTopic::read(const JSON& input)
         m.read(message);
         messages.push_back(m);
     }
+
+    id = input["id"];
 }
 
 void RawTopic::write(JSON& output)
@@ -34,4 +36,6 @@ void RawTopic::write(JSON& output)
         message.write(json);
         output["messages"].push_back(json);
     }
+
+    output["id"] = id;
 }

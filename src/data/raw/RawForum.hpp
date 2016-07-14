@@ -6,7 +6,7 @@
 
 struct RawForum
 {
-    std::vector<RawTopic> topics;
+    std::map<int,RawTopic> topics;
 };
 
 #endif /* end of include guard: RAWFORUM_H */

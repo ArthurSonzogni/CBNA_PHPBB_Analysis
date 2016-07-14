@@ -11,6 +11,7 @@ struct RawTopic
     std::string title;
     std::vector<std::string> path;
     std::vector<RawMessage> messages;
+    int id;
 
     // [ methods ]
     using JSON = nlohmann::json;
