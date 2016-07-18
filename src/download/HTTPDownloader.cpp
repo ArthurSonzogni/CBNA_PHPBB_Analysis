@@ -1,5 +1,5 @@
 /**
- * HTTPDownloader.cpp
+* HTTPDownloader.cpp
  *
  * A simple C++ wrapper for the libcurl easy API.
  *
@@ -32,6 +32,22 @@ HTTPDownloader::~HTTPDownloader() {
 #include <chrono>
 #include <thread>
 
+// This function is not part of HTTPDownloader.
+// Made by ArthurSonzogni and the answer from
+// http://stackoverflow.com/a/4059934
+static std::string to_utf8(const std::string& text)
+{
+    std::string output;
+    output.resize(2*text.size());
+    const unsigned char *in =  (unsigned char*)&text[0];
+         unsigned char *out =  (unsigned char*)&output[0];
+    while (*in)
+      if (*in<128) *out++=*in++;
+      else *out++=0xc2+(*in>0xbf), *out++=(*in++&0x3f)+0x80;
+    output.resize(out-(unsigned char*)output.c_str());
+    return output;
+}
+
 string HTTPDownloader::download(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     /* example.com is redirected, so we tell libcurl to follow redirection */
@@ -49,9 +65,11 @@ string HTTPDownloader::download(const std::string& url) {
                 curl_easy_strerror(res));
     }
 
-    // sleep for 3s
-    //std::this_thread::sleep_for (std::chrono::seconds(3));
+    // sleep for 1s
+    std::this_thread::sleep_for (std::chrono::seconds(1));
 
-
-    return out.str();
+ 
+    // convert windows-1252 to UTF8
+    return to_utf8(out.str());
 }
+

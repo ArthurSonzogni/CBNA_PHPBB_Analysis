@@ -6,16 +6,23 @@
 class ForumCrawler
 {
 public:
-    ForumCrawler(const std::string& website);
+    ForumCrawler(const std::string& website,
+                 const std::string& save_dir);
 
     bool parse();
-    void load(const std::string& directory);
-    void save(const std::string& directory);
+    void load();
+
+    const RawForum& raw_forum();
 private:
 
+    void save();
+    void save(int topic_id);
+
     RawForum rawForum;
+
     std::string website;
-    int getStartingPoint();
+    std::string save_dir;
+    int starting_point = 1;
 };
 
 #endif /* end of include guard: FORUMCRAWLER_HPP */

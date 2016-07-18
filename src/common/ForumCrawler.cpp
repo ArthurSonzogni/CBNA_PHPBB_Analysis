@@ -7,8 +7,10 @@
 
 using JSON = nlohmann::json;
 
-ForumCrawler::ForumCrawler(const std::string& website)
-  : website(website)
+ForumCrawler::ForumCrawler(const std::string& website,
+                           const std::string& save_dir)
+  : website(website),
+    save_dir(save_dir)
 {
 }
 
@@ -21,12 +23,14 @@ bool ForumCrawler::parse()
     int fail_allowed_max = 10;
     int fail_allowed = fail_allowed_max;
     int remaining_topic_download = 10;
-    for(int topic_id = getStartingPoint(); remaining_topic_download >=0; ++topic_id)
+    for(int topic_id = starting_point; remaining_topic_download >=0; ++topic_id)
     {
+        starting_point = topic_id+1;
         if (topicParser.parse(topic_id))
         {
             found_something = true;
             rawForum.topics[topic_id] = topicParser.toRaw();
+            save(topic_id);
             fail_allowed = fail_allowed_max;
             remaining_topic_download--;
         }
@@ -40,38 +44,40 @@ bool ForumCrawler::parse()
     return found_something;
 }
 
-void ForumCrawler::save(const std::string& directory)
+void ForumCrawler::save()
 {
     for(auto& topic_entry : rawForum.topics)
     {
-        auto& id    = topic_entry.first;
-        auto& topic = topic_entry.second;
-        std::cout << "Saving topic n°"<< id << std::endl;
-        JSON json;
-        topic.write(json);
-        std::ofstream file(std::to_string(id));
-        file << std::setw(4) << json;
+        save(topic_entry.first);
     }
 }
 
-void ForumCrawler::load(const std::string& directory)
+void ForumCrawler::save(int topic_id)
 {
-    for(auto& file_name : list_files(directory)) try
+    auto& topic = rawForum.topics[topic_id];
+    std::cout << "Saving topic n°"<< topic_id << '\r' << std::flush;
+    JSON json;
+    topic.write(json);
+    std::ofstream file(save_dir + "/" + std::to_string(topic_id));
+    file << std::setw(4) << json;
+}
+
+void ForumCrawler::load()
+{
+    for(auto& file_name : list_files(save_dir)) try
     {
       int id = std::stoi(file_name);
-      std::cout << "Loading topic n°"<< id << std::endl;
+      std::cout << "Loading topic n°"<< id << '\r' << std::flush;
       JSON json;
-      std::ifstream file(directory+"/"+file_name);
+      std::ifstream file(save_dir+"/"+file_name);
       file >> json;
       rawForum.topics[id].read(json);
+      starting_point = std::max(starting_point,id+1);
     }
     catch(...){} // we catch exception from std::stoi
 }
 
-int ForumCrawler::getStartingPoint()
+const RawForum& ForumCrawler::raw_forum()
 {
-    if (rawForum.topics.empty())
-      return 0;
-    else
-      return rawForum.topics.rbegin()->first + 1;
+    return rawForum;
 }
