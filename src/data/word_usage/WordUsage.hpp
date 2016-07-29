@@ -17,7 +17,7 @@ struct WordUsage
     //-------------------------------------------------------------------------
 
     // Here we store sum relatively to some variables in {word,user,section}
-    int64_t                                              sum;
+    int64_t                                              sum = 0;
     std::map<std::string,int64_t>                        sum_words;
     std::map<std::string,int64_t>                        sum_users;
     std::map<std::string,int64_t>                        sum_section;

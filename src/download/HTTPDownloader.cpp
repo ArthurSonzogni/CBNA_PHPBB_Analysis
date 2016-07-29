@@ -66,7 +66,7 @@ string HTTPDownloader::download(const std::string& url) {
     }
 
     // sleep for 1s
-    std::this_thread::sleep_for (std::chrono::seconds(1));
+    //std::this_thread::sleep_for (std::chrono::seconds(1));
 
  
     // convert windows-1252 to UTF8

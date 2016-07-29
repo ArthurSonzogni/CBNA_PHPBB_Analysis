@@ -127,20 +127,39 @@ void WordUsage::print_user_best_word(std::ostream& out)
 
         out << " | " << std::setw(22) << u.user
             << " | " << std::setw(20)  << u.word
-            << " | " << std::setw(10)  << int(10000*u.ratio) * 0.01 << "%"
+            << " | " << std::setw(10)  << int(10000.0*u.ratio) * 0.01 << "%"
             << " | " << std::endl;
     }
 }
 
 void WordUsage::print_section(std::ostream& out)
 {
+    struct SectionUsage
+    {
+        std::string section;
+        double ratio;
+        bool operator<(const SectionUsage& other) const
+        {
+            return  ratio > other.ratio;
+        }
+    };
+    std::vector<SectionUsage> usages;
+
     for(auto& it : sum_section)
     {
         std::string section = it.first;
         double ratio = double(it.second) / double(sum);
-        fix_word(section,50);
-        out << " | " << std::setw(50) << section
-            << " | " << std::setw(10) << int(10000*ratio)/100.0 << "%"
+        if (ratio>0.005)
+        {
+            fix_word(section,50);
+            usages.push_back(SectionUsage{section,ratio});
+        }
+    }
+    sort(usages.begin(),usages.end());
+    for(auto& usage : usages)
+    {
+        out << " | " << std::setw(50) << usage.section
+            << " | " << std::setw(10) << int(10000.0*usage.ratio)/100.0 << "%"
             << std::endl;
     }
 }

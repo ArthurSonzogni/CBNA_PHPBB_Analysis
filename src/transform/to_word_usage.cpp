@@ -48,8 +48,8 @@ WordUsage to_word_usage(const RawForum& forum)
         std::cout << "Computing word usage, topic = "
                   << topic_entry.first << '\r' << std::flush;
         auto& topic = topic_entry.second;
-        std::string section = topic.path.size() >= 2
-                            ? topic.path.at(1)
+        std::string section = topic.path.size() >= 3
+                            ? topic.path.at(2)
                             : std::string();
         for(auto& message : topic.messages)
         {
