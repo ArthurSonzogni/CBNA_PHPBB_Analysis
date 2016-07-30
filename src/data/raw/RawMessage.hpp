@@ -3,6 +3,7 @@
 
 #include <string>
 #include "json.hpp"
+#include "../common/Date.hpp"
 
 
 struct RawMessage
@@ -10,6 +11,7 @@ struct RawMessage
     // [ data ]
     std::string author;
     std::string content;
+    Date date;
 
     // [ methods ]
     using JSON = nlohmann::json;

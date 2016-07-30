@@ -7,30 +7,24 @@ bool MessageParser::parse(CNode& post)
     // parse author
     CSelection author = post.find("span.name > strong");
     if (author.nodeNum() < 1)
-    {
-        //std::cout << "Error at " << __LINE__ << std::endl;
         return false;
-    }
     rawMessage.author=author.nodeAt(0).text();
 
     // parse message
     CSelection message = post.find(".postbody > div");
     if (message.nodeNum() < 1)
-    {
-        //std::cout << "Error at " << __LINE__ << std::endl;
         return false;
-    }
     rawMessage.content = message.nodeAt(0).text();
 
     // parse date
     // TODO(arthur)
-    //CSelection  date= post.find(".postdetails");
-    //if (date.nodeNum() >= 2)
-    //{
-        ////std::cout << "Error at " << __LINE__ << std::endl;
-        //std::cout << date.nodeAt(1).text() << std::endl;
-        //return false;
-    //}
+    CSelection  date= post.find(".postdetails");
+    if (date.nodeNum() >= 2)
+    if (date.nodeAt(1).childNum() >= 4)
+    {
+        rawMessage.date.fromString(
+            date.nodeAt(1).childAt(3).text());
+    }
 
     return true;
 }

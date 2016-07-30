@@ -12,6 +12,7 @@
 #include <curl/curlbuild.h>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
@@ -69,7 +70,13 @@ string HTTPDownloader::download(const std::string& url) {
     //std::this_thread::sleep_for (std::chrono::seconds(1));
 
  
+    // NOTE(ArthurSonzogni)
+    // we remove every line break.
+    // I don't know why exactly.
+    std::string str = out.str();
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+
     // convert windows-1252 to UTF8
-    return to_utf8(out.str());
+    return to_utf8(str);
 }
 

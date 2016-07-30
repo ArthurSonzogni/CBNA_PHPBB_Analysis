@@ -12,7 +12,7 @@ struct WordUsage
     void add(const std::string& word,
              const std::string& user,
              const std::string& section);
-    void print_summary(std::ostream& out);
+    void print_summary(std::ostream&);
 
     //-------------------------------------------------------------------------
 

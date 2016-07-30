@@ -1,5 +1,6 @@
 #include "to_word_usage.hpp"
 #include <iostream>
+#include <set>
 
 static bool is_good_char(const char c)
 {
