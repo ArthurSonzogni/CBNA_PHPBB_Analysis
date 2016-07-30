@@ -4,9 +4,10 @@
 
 static bool is_good_char(const char c)
 {
-  return (c>='a' && c<='z')
-      || (c>='A' && c<='Z')
-      || (c>='0' && c<='9');
+  return  c !=' ' && c !=',' && c != '!' && c != '?';
+  //return (c>='a' && c<='z')
+      //|| (c>='A' && c<='Z')
+      //|| (c>='0' && c<='9');
 }
 
 std::vector<std::string> split(const std::string& text)
@@ -41,9 +42,11 @@ std::vector<std::string> split(const std::string& text)
     return result;
 }
 
-WordUsage to_word_usage(const RawForum& forum)
+WordUsage to_word_usage(const RawForum& forum, std::set<std::string> word_to_view)
 {
     WordUsage usage;
+    for(auto& word : word_to_view)
+        usage.add_word_to_view(word);
     for(auto& topic_entry  : forum.topics)
     {
         std::cout << "Computing word usage, topic = "

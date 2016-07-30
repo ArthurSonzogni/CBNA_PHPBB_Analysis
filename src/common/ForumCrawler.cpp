@@ -20,7 +20,7 @@ bool ForumCrawler::parse()
     bool found_something = false;
     TopicParser topicParser(website);
 
-    int fail_allowed_max = 10;
+    int fail_allowed_max = 200;
     int fail_allowed = fail_allowed_max;
     int remaining_topic_download = 10;
     for(int topic_id = starting_point; remaining_topic_download >=0; ++topic_id)

@@ -15,15 +15,27 @@ void WordUsage::add(const std::string& word,
                     const std::string& section)
 {
     if (user == "Contenu sponsorisé") return;
-    if (word.size() <= 3) return;
+    if (word.size() <= 2) return;
+    std::string w = word;
+    std::transform(w.begin(), w.end(), w.begin(), ::tolower);
     sum++;
-    sum_words[word]++;
+    sum_words[w]++;
     sum_users[user]++;
     sum_section[section]++;
-    sum_user_words[user][word]++;
-    sum_words_user[word][user]++;
+    sum_user_words[user][w]++;
+    sum_words_user[w][user]++;
     sum_section_users[section][user]++;
-    sum_section_words[section][word]++;
+    sum_section_words[section][w]++;
+
+    if (word_to_view.count(w))
+        sum_word_to_view_users[w][user]++;
+}
+
+void WordUsage::add_word_to_view(const std::string& word)
+{
+    std::string w = word;
+    std::transform(w.begin(), w.end(), w.begin(), ::tolower);
+    word_to_view.insert(w);
 }
 
 void WordUsage::print_summary(std::ostream& out)
@@ -34,6 +46,8 @@ void WordUsage::print_summary(std::ostream& out)
     print_word_best_user(out);
     out << std::endl << "[section]" << std::endl;
     print_section(out);
+    out << std::endl << "[word to view]" << std::endl;
+    print_word_to_view(out);
 }
 
 void WordUsage::print_word_best_user(std::ostream& out)
@@ -50,13 +64,16 @@ void WordUsage::print_word_best_user(std::ostream& out)
     std::vector<RecordWord> record_word;
     for(auto& e : sum_words)
     {
-        if (e.first.size()>=8)
-          record_word.push_back({e.first,e.second});
+        record_word.push_back({e.first,e.second});
     }
     sort(record_word.begin(),record_word.end());
 
-    if (record_word.size() > 500)
-        record_word.resize(500);
+    int limit = 0;
+    while(limit<record_word.size() && record_word[limit].sum > 100)
+      ++limit;
+    out << "limit = " << limit << std::endl;
+    if (record_word.size() > limit)
+        record_word.resize(limit);
 
     for(auto& element : record_word)
     {
@@ -66,7 +83,7 @@ void WordUsage::print_word_best_user(std::ostream& out)
         {
             auto& user = user_count.first;
             auto sum_words = sum_users[user];
-            if (sum_words*1000000<sum) continue;
+            if (sum_words*500<sum) continue;
             auto sum_this_word = user_count.second;
             double this_ratio = double(sum_this_word) / double(sum_words);
             if (this_ratio > best_ratio)
@@ -75,14 +92,15 @@ void WordUsage::print_word_best_user(std::ostream& out)
                 best_user = user;
             }
         }
+        if (best_user.size() == 0) continue;
         fix_word(element.word,20);
         fix_word(best_user,20);
 
-        std::cout << " | " << std::setw(5)  << element.sum
-                  << " | " << std::setw(20) << element.word
-                  << " | " << std::setw(20) << best_user
-                  << " | " << std::setw(20) << 100.0 * best_ratio  << "%"
-                  << " | " << std::endl;
+        out << " | " << std::setw(5)  << element.sum
+            << " | " << std::setw(20) << element.word
+            << " | " << std::setw(20) << best_user
+            << " | " << std::setw(20) << 100.0 * best_ratio  << "%"
+            << " | " << std::endl;
 
     }
 }
@@ -103,11 +121,12 @@ void WordUsage::print_user_best_word(std::ostream& out)
     for(const auto& by_user : sum_user_words)
     {
         const auto& user = by_user.first;
-        if (sum_users[user]*1000000.0 < sum) continue;
+        if (sum_users[user]*50000 < sum) continue;
         std::string best_word = "";
         int64_t best_count = 0;
         for(const auto&  by_word : by_user.second)
         {
+            if (by_word.first.size() > 6)
             if (by_word.second > best_count)
             {
                 best_word = by_word.first;
@@ -118,8 +137,6 @@ void WordUsage::print_user_best_word(std::ostream& out)
         user_best_word.push_back(UserBestWord{user,best_word,ratio});
     }
     sort(user_best_word.begin(),user_best_word.end());
-    if (user_best_word.size() > 500)
-        user_best_word.resize(500);
     for(auto& u : user_best_word)
     {
         fix_word(u.word,20);
@@ -161,5 +178,33 @@ void WordUsage::print_section(std::ostream& out)
         out << " | " << std::setw(50) << usage.section
             << " | " << std::setw(10) << int(10000.0*usage.ratio)/100.0 << "%"
             << std::endl;
+    }
+}
+
+void WordUsage::print_word_to_view(std::ostream& out)
+{
+    for(auto& word : word_to_view)
+    {
+        out << "  [ word = " << word << " ]"<< std::endl;
+        struct UserCount
+        {
+            std::string user;
+            int64_t count;
+            bool operator<(const UserCount& other)
+            {
+                return count>other.count;
+            }
+        };
+        std::vector<UserCount> data;
+        for(auto& it : sum_word_to_view_users[word])
+            data.push_back(UserCount{it.first,it.second});
+        sort(data.begin(),data.end());
+        for(auto& it : data)
+        {
+            fix_word(it.user,30);
+            out << " | "  << std::setw(30) << it.user
+                << " | "  << std::setw(5)  << it.count
+                << " | "  << std::endl;
+        }
     }
 }
