@@ -6,6 +6,7 @@
 #include "common/ForumCrawler.hpp"
 #include "transform/to_word_usage.hpp"
 #include "transform/to_time_stat.hpp"
+#include "transform/to_test_cbna_forum.hpp"
 
 
 #include <cstdlib> // system()
@@ -27,18 +28,22 @@ int main(int argc, char** argv)
     ForumCrawler forumCrawler(website, save_dir);
     forumCrawler.load();
 
-    auto time_stat = to_time_stat(forumCrawler.raw_forum());
-    time_stat.print_summary(std::cout);
+    //auto time_stat = to_time_stat(forumCrawler.raw_forum());
+    //time_stat.print_summary(std::cout);
 
-    auto word_usage = to_word_usage(forumCrawler.raw_forum(), {"C++","Java","oui","non"});
-    //word_usage.print_summary(std::cout);
-    word_usage.print_user_best_word(file_user_best_word);
-    word_usage.print_word_best_user(file_word_best_user);
-    word_usage.print_section(file_section);
-    word_usage.print_word_to_view(file_word_to_view);
+    //auto word_usage = to_word_usage(forumCrawler.raw_forum(),
+        //{"C++","Java","Javascript","Python","Haxe","Ruby","C#","oui","non"});
+    ////word_usage.print_summary(std::cout);
+    //word_usage.print_user_best_word(file_user_best_word);
+    //word_usage.print_word_best_user(file_word_best_user);
+    //word_usage.print_section(file_section);
+    //word_usage.print_word_to_view(file_word_to_view);
 
     while(forumCrawler.parse())
     {
     }
+
+    // export the forum to test.cbna
+    to_test_cbna_forum(forumCrawler.raw_forum(),"cbna_forum");
     return EXIT_SUCCESS;
 }
