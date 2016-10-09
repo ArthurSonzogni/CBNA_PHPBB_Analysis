@@ -33,7 +33,9 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
         json["creation_date"] = "2016-01-01T00:00:00";
         json["draft"] = false;
         json["locked"] = false;
-        json["title"] = topic.title;
+        // Quickfix, remove the first two char (0x22C2)
+        // TODO(arthursonzogni): remove this once the bug is fixed.
+        json["title"] = topic.title.substr(2,topic.title.size()-2);
         file << std::setw(4) << json;
 
         //-------------
