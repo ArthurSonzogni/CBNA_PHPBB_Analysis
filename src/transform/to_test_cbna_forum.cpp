@@ -12,6 +12,11 @@ static bool mkdir(const std::string& directory)
 
 void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
 {
+    std::map<std::string,int> user_id_map;
+    int next_user_id = 0;
+    std::string user_directory = directory+"/message_board/contents/users/";
+    mkdir(user_directory);
+
     //-------------
     // Topics
     //-------------
@@ -45,12 +50,36 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
         int message_id = 0;
         for(auto& message : topic.messages)
         {
+            //-------------
+            // User
+            //-------------
+            int user_id;
+            if (user_id_map.count(message.author))
+            {
+              user_id = user_id_map[message.author];
+            }
+            else
+            {
+              user_id = next_user_id;
+              next_user_id++;
+              user_id_map[message.author] = user_id;
+              JSON json;
+              json["avatar"] = "0.png";
+              json["email"] = "unknown@lecbna.org";
+              json["name"] = message.author;
+              json["nickname"] = message.author;
+              json["password"] = message.author;
+              json["signupdate"] = "2016-01-01T00:00:00";
+              std::ofstream file(user_directory + std::to_string(user_id));
+              file << std::setw(4) << json;
+            }
+
             JSON json;
-            json["authors"].push_back(0);
+            json["authors"].push_back(user_id);
             json["date"] = "2016-01-01T00:00:00";
             json["content"] = message.content;
             std::ofstream file(topic_directory +
-                "/messages/" + std::to_string(message_id++));
+                "/user/" + std::to_string(message_id++));
             file << std::setw(4) << json;
         }
     }
