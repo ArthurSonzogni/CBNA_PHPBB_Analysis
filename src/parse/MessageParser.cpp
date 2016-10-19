@@ -1,5 +1,6 @@
 #include "MessageParser.hpp"
 #include "gumbo-query/src/Selection.h"
+#include "HTMLToMarkdown.h"
 
 
 bool MessageParser::parse(CNode& post)
@@ -14,7 +15,10 @@ bool MessageParser::parse(CNode& post)
     CSelection message = post.find(".postbody > div");
     if (message.nodeNum() < 1)
         return false;
-    rawMessage.content = message.nodeAt(0).text();
+    //rawMessage.content = message.nodeAt(0).text();
+    rawMessage.content = HTMLToMarkdown(message.nodeAt(0));
+    std::cerr << "-----------" << std::endl;
+    std::cerr << rawMessage.content << std::endl;
 
     // parse date
     // TODO(arthur)
@@ -22,8 +26,7 @@ bool MessageParser::parse(CNode& post)
     if (date.nodeNum() >= 2)
     if (date.nodeAt(1).childNum() >= 4)
     {
-        rawMessage.date.fromString(
-            date.nodeAt(1).childAt(3).text());
+        rawMessage.date.fromString(date.nodeAt(1).childAt(3).text());
     }
 
     return true;
