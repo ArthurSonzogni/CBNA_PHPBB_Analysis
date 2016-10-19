@@ -78,8 +78,8 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
             json["authors"].push_back(user_id);
             json["date"] = "2016-01-01T00:00:00";
             json["content"] = message.content;
-            std::ofstream file(topic_directory +
-                "/user/" + std::to_string(message_id++));
+            std::ofstream file(topic_directory + "/messages/"
+                + std::to_string(message_id++));
             file << std::setw(4) << json;
         }
     }

@@ -33,6 +33,7 @@ bool ForumCrawler::parse()
             save(topic_id);
             fail_allowed = fail_allowed_max;
             remaining_topic_download--;
+            save(topic_id);
         }
         else
         {

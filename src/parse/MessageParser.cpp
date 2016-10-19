@@ -11,6 +11,10 @@ bool MessageParser::parse(CNode& post)
         return false;
     rawMessage.author=author.nodeAt(0).text();
 
+    // remove ads
+    if (rawMessage.author == "Contenu sponsorisé")
+      return false;
+
     // parse message
     CSelection message = post.find(".postbody > div");
     if (message.nodeNum() < 1)
