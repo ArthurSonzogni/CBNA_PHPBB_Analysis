@@ -51,13 +51,15 @@ static std::string to_utf8(const std::string& text)
 
 string HTTPDownloader::download(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    /* example.com is redirected, so we tell libcurl to follow redirection */
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
     curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "deflate");
     std::stringstream out;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 100);
+		//curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+
     /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);
     /* Check for errors */

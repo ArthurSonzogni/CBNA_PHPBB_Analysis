@@ -19,10 +19,9 @@ bool MessageParser::parse(CNode& post)
     CSelection message = post.find(".postbody > div");
     if (message.nodeNum() < 1)
         return false;
-    //rawMessage.content = message.nodeAt(0).text();
     rawMessage.content = HTMLToMarkdown(message.nodeAt(0));
-    std::cerr << "-----------" << std::endl;
-    std::cerr << rawMessage.content << std::endl;
+    //std::cerr << "--------------------------" << std::endl;
+    //std::cerr << rawMessage.content << std::endl;
 
     // parse date
     // TODO(arthur)

@@ -14,8 +14,10 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
 {
     std::map<std::string,int> user_id_map;
     int next_user_id = 0;
-    std::string user_directory = directory+"/message_board/contents/users/";
+    std::string user_directory = directory+"/message_board/users/";
+    std::string topic_directory = directory+"/message_board/contents/topics/";
     mkdir(user_directory);
+    mkdir(topic_directory);
 
     //-------------
     // Topics
@@ -25,28 +27,24 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
         auto& topic_id = topic_pair.first;
         auto& topic    = topic_pair.second;
 
-        std::string topic_directory =
-            directory + "/message_board/contents" +
-             "/topics/" + std::to_string(topic_id);
-        mkdir(topic_directory);
+        std::string topic_filename = topic_directory + std::to_string(topic_id);
 
         //-------------
         // Topic info
         //-------------
-        std::ofstream file(topic_directory + "/info");
-        JSON json;
-        json["creation_date"] = "2016-01-01T00:00:00";
-        json["draft"] = false;
-        json["locked"] = false;
+        std::ofstream file(topic_filename);
+        JSON topic_json;
+        topic_json["creation_date"] = "2016-01-01T00:00:00";
+        topic_json["draft"] = false;
+        topic_json["locked"] = false;
         // Quickfix, remove the first two char (0x22C2)
         // TODO(arthursonzogni): remove this once the bug is fixed.
-        json["title"] = topic.title.substr(2,topic.title.size()-2);
-        file << std::setw(4) << json;
+        topic_json["title"] = topic.title.substr(2,topic.title.size()-2);
+        topic_json["messages"] = JSON::array();
 
         //-------------
         // Messages
         //-------------
-        mkdir(topic_directory+"/messages/");
         int message_id = 0;
         for(auto& message : topic.messages)
         {
@@ -63,24 +61,23 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
               user_id = next_user_id;
               next_user_id++;
               user_id_map[message.author] = user_id;
-              JSON json;
-              json["avatar"] = "0.png";
-              json["email"] = "unknown@lecbna.org";
-              json["name"] = message.author;
-              json["nickname"] = message.author;
-              json["password"] = message.author;
-              json["signupdate"] = "2016-01-01T00:00:00";
+              JSON user_json;
+              user_json["avatar"] = "0.png";
+              user_json["email"] = "unknown@lecbna.org";
+              user_json["name"] = message.author;
+              user_json["nickname"] = message.author;
+              user_json["password"] = message.author;
+              user_json["signupdate"] = "2016-01-01T00:00:00";
               std::ofstream file(user_directory + std::to_string(user_id));
-              file << std::setw(4) << json;
+              file << std::setw(2) << user_json;
             }
 
-            JSON json;
-            json["authors"].push_back(user_id);
-            json["date"] = "2016-01-01T00:00:00";
-            json["content"] = message.content;
-            std::ofstream file(topic_directory + "/messages/"
-                + std::to_string(message_id++));
-            file << std::setw(4) << json;
+            JSON message_json;
+            message_json["authors"].push_back(user_id);
+            message_json["date"] = "2016-01-01T00:00:00";
+            message_json["content"] = message.content;
+            topic_json["messages"].push_back(message_json);
         }
+        file << std::setw(2) << topic_json;
     }
 }

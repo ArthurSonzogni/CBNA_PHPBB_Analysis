@@ -22,8 +22,7 @@ bool ForumCrawler::parse()
 
     int fail_allowed_max = 200;
     int fail_allowed = fail_allowed_max;
-    int remaining_topic_download = 10;
-    for(int topic_id = starting_point; remaining_topic_download >=0; ++topic_id)
+    for(int topic_id = starting_point; ; ++topic_id)
     {
         starting_point = topic_id+1;
         if (topicParser.parse(topic_id))
@@ -32,7 +31,6 @@ bool ForumCrawler::parse()
             rawForum.topics[topic_id] = topicParser.toRaw();
             save(topic_id);
             fail_allowed = fail_allowed_max;
-            remaining_topic_download--;
             save(topic_id);
         }
         else
