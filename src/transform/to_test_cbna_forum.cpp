@@ -67,6 +67,8 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
               user_json["name"] = message.author;
               user_json["nickname"] = message.author;
               user_json["password"] = message.author;
+              user_json["is_moderator"] = false;
+              user_json["is_admin"] = false;
               user_json["signupdate"] = "2016-01-01T00:00:00";
               std::ofstream file(user_directory + std::to_string(user_id));
               file << std::setw(2) << user_json;
