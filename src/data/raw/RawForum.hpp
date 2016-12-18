@@ -3,10 +3,12 @@
 
 #include <map>
 #include "RawTopic.hpp"
+#include "RawUser.hpp"
 
 struct RawForum
 {
     std::map<int,RawTopic> topics;
+    std::map<int,RawUser> users;
 };
 
 #endif /* end of include guard: RAWFORUM_H */

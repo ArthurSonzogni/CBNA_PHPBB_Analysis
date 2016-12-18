@@ -6,22 +6,19 @@
 bool MessageParser::parse(CNode& post)
 {
     // parse author
-    CSelection author = post.find("span.name > strong");
+    CSelection author = post.find("span.name > strong > a");
     if (author.nodeNum() < 1)
         return false;
-    rawMessage.author=author.nodeAt(0).text();
-
-    // remove ads
-    if (rawMessage.author == "Contenu sponsorisé")
+    std::string author_href=author.nodeAt(0).attribute("href");
+    if (author_href.size() <= 2)
       return false;
+    rawMessage.author=std::stoi(author_href.substr(2,std::string::npos));
 
     // parse message
     CSelection message = post.find(".postbody > div");
     if (message.nodeNum() < 1)
         return false;
     rawMessage.content = HTMLToMarkdown(message.nodeAt(0));
-    //std::cerr << "--------------------------" << std::endl;
-    //std::cerr << rawMessage.content << std::endl;
 
     // parse date
     // TODO(arthur)

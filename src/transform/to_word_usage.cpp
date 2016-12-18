@@ -57,7 +57,7 @@ WordUsage to_word_usage(const RawForum& forum, std::set<std::string> word_to_vie
                             : std::string();
         for(auto& message : topic.messages)
         {
-            std::string user = message.author;
+            std::string user = forum.users.at(message.author).name;
             for(auto& word : split(message.content))
             {
                 usage.add(word,user,section);

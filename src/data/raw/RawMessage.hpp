@@ -9,7 +9,7 @@
 struct RawMessage
 {
     // [ data ]
-    std::string author;
+    int author;
     std::string content;
     Date date;
 

@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include "fstream"
 using namespace std;
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
@@ -49,6 +50,24 @@ static std::string to_utf8(const std::string& text)
     return output;
 }
 
+// static
+void make_cookie_file()
+{
+	static bool is_done = false;
+	if (is_done)
+		return;
+	std::string cookie_file_content = 
+R"(
+.forumactif.com	TRUE	/	FALSE	1513599487	displayCookieConsent	y
+.cbna.forumactif.com	TRUE	/	FALSE	1513599645	fa_cbna_forumactif_com_data	a%3A3%3A%7Bs%3A11%3A%22autologinid%22%3Bs%3A64%3A%2224ceb5277b3dcfac76d04ae09c8ec249c70e16fq24ceb528ed83f1e3142c0a8d%22%3Bs%3A6%3A%22userid%22%3Bs%3A4%3A%222483%22%3Bs%3A5%3A%22posts%22%3Ba%3A2%3A%7Bs%3A6%3A%22number%22%3Bi%3A0%3Bs%3A4%3A%22last%22%3Bi%3A0%3B%7D%7D
+.cbna.forumactif.com	TRUE	/	FALSE	0	fa_cbna_forumactif_com_sid	a63c89037750a07999c81b60c8805ba3
+.cbna.forumactif.com	TRUE	/	FALSE	0	fa_cbna_forumactif_com_t	a%3A1%3A%7Bi%3A13138%3Bi%3A1482063646%3B%7D
+)";
+	std::ofstream cookie_file("./cookieFile.txt");
+	cookie_file << cookie_file_content << std::endl;
+	is_done = true;
+}
+
 string HTTPDownloader::download(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -59,6 +78,10 @@ string HTTPDownloader::download(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 100);
 		//curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+
+		make_cookie_file();
+		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "./cookieFile.txt");
+
 
     /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);

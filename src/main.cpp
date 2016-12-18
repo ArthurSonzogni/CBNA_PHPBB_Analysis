@@ -22,7 +22,9 @@ int main(int argc, char** argv)
     const std::string website = "cbna.forumactif.com";
     const std::string save_dir = "save";
 
-    if (std::system(("mkdir -p " + save_dir).c_str()) != EXIT_SUCCESS)
+    if (std::system(("mkdir -p " + save_dir + "/users").c_str()) != EXIT_SUCCESS)
+      return EXIT_FAILURE;
+    if (std::system(("mkdir -p " + save_dir + "/topics").c_str()) != EXIT_SUCCESS)
       return EXIT_FAILURE;
 
     ForumCrawler forumCrawler(website, save_dir);
