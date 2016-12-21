@@ -46,7 +46,7 @@ bool UserParser::parse(const int user_id)
 
     // download the topic
     HTTPDownloader downloader;
-    std::string content = downloader.download(page_name);
+    std::string content = downloader.download(page_name, true);
 
     if (content.empty())
       return false;
@@ -71,9 +71,8 @@ bool UserParser::parse(const int user_id)
 		// parse avatar
 		{
 			CSelection selection = doc.find(avatar_selector);
-			if (selection.nodeNum() != 1)
-				return false;
-			raw_user.avatar_url = selection.nodeAt(0).attribute("src");
+			if (selection.nodeNum() == 1)
+			  raw_user.avatar_url = selection.nodeAt(0).attribute("src");
 		}
 
 		// parse other data

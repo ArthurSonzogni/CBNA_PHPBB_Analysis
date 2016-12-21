@@ -17,9 +17,10 @@ ForumCrawler::ForumCrawler(const std::string& website,
 
 bool ForumCrawler::parse()
 {
-  return true;
-    //parse_topics() &&
-    //parse_users();
+  return
+    parse_topics() &&
+    parse_users() &&
+    true;
 }
 
 bool ForumCrawler::parse_topics()
@@ -27,10 +28,11 @@ bool ForumCrawler::parse_topics()
     bool found_something = false;
     TopicParser topic_parser(website);
 
-    int fail_allowed_max = 200;
+    int fail_allowed_max = 500;
     int fail_allowed = fail_allowed_max;
     for(int topic_id = topic_next; ; ++topic_id)
     {
+        std::cout << "Parsing topic : " << topic_id << '\r' << std::endl;
         topic_next = topic_id;
         if (topic_parser.parse(topic_id))
         {
@@ -41,6 +43,7 @@ bool ForumCrawler::parse_topics()
         }
         else
         {
+            std::cout << "Fail topic = (" << topic_id << ")" << std::endl;
             fail_allowed--;
             if (fail_allowed <= 0)
               break;
@@ -54,7 +57,7 @@ bool ForumCrawler::parse_users()
     bool found_something = false;
     UserParser user_parser(website);
 
-    int fail_allowed_max = 200;
+    int fail_allowed_max = 500;
     int fail_allowed = fail_allowed_max;
     for(int user_id = user_next; ; ++user_id)
     {

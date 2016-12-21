@@ -7,7 +7,7 @@ bool MessageParser::parse(CNode& post)
 {
     // parse author
     CSelection author = post.find("span.name > strong > a");
-    if (author.nodeNum() < 1)
+    if (author.nodeNum() == 0)
         return false;
     std::string author_href=author.nodeAt(0).attribute("href");
     if (author_href.size() <= 2)

@@ -16,13 +16,14 @@ bool TopicParser::parse(const int topic_id)
 {
     raw_topic.id = topic_id;
     raw_topic.messages.clear();
+    std::string content;
     for(int page = 0; /*breaked below*/; /*multi-incremented below*/)
     {
         const std::string page_name = "http://" + website + "/t" + std::to_string(topic_id) + "p" + std::to_string(page) +  "-title";
 
         // download the topic
         HTTPDownloader downloader;
-        std::string content = downloader.download(page_name);
+        content = downloader.download(page_name, true);
 
         if (content.empty()) break;
 

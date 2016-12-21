@@ -23,7 +23,7 @@ public:
      * @param url The URL to download
      * @return The download result
      */
-    std::string download(const std::string& url);
+    std::string download(const std::string& url, bool use_cookie = false);
 private:
     void* curl;
 };
