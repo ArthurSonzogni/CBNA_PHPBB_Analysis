@@ -4,10 +4,44 @@
 using JSON = nlohmann::json;
 
 
-static bool mkdir(const std::string& directory)
-{
-  std::cout << ("mkdir -p " + directory) << std::endl;
-  return std::system(("mkdir -p " + directory).c_str());
+namespace {
+
+  static bool mkdir(const std::string& directory)
+  {
+    std::cout << ("mkdir -p " + directory) << std::endl;
+    return std::system(("mkdir -p " + directory).c_str());
+  }
+
+
+  std::map<std::string, std::vector<std::string>> topic_labels_map = {
+    {"Le CBNA"                         , {"CBNA"}}        ,
+    {"Projets"                         , {"projet", "creation"}}      ,
+    {"Projets communs"                 , {"projet", "creation", "commun"}}   ,
+    {"Compétitions"                    , {"compétition"}} ,
+    {"GMF: GameMaker en France"        , {}} ,
+    {"Zut"                             , {}} ,
+    {"Section Membres"                 , {"membres"}} ,
+    {"CBN'ART"                         , {"créations", "art"}} ,
+    {"Section Spirituelle"             , {"débat", "partage"}} ,
+    {"Game Design"                     , {"game design"}} ,
+    {"Game Maker"                      , {"game maker"}} ,
+    {"Programmation"                   , {"programmation"}} ,
+    {"Entraide débutants"              , {"aide", "débutant"}} ,
+    {"Entraide confirmés"              , {"aide", "confirmé"}} ,
+    {"Scripts GML"                     , {"scripts", "création", "GML"}} ,
+    {"Apprendre à utiliser GameMaker"  , {"aide", "cours"}} ,
+  };
+
+  std::vector<std::string> topic_labels(const RawTopic& topic) {
+    if (topic.path.size() != 3) {
+      std::cerr << "Warning: no path for a topic" << std::endl;
+      return {};
+    }
+    std::string section = topic.path[2];
+    if (topic_labels_map.count(section) == 0)
+      std::cerr << "Warning \"" << section << "\" is not found" << std::endl;
+    return topic_labels_map[section];
+  }
 }
 
 void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
@@ -51,7 +85,7 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
 
     //-------------
     // Topic info
-    //-------------
+    //-----------
     std::ofstream file(topic_filename);
     JSON topic_json;
     topic_json["creation_date"] = "2016-01-01T00:00:00";
@@ -60,11 +94,12 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
     // Quickfix, remove the first two char (0x22C2)
     // TODO(arthursonzogni): remove this once the bug is fixed.
     topic_json["title"] = topic.title.substr(2,topic.title.size()-2);
-    topic_json["messages"] = JSON::array();
+    topic_json["labels"] = topic_labels(topic);
 
     //-------------
     // Messages
     //-------------
+    topic_json["messages"] = JSON::array();
     int message_id = 0;
     for(auto& message : topic.messages)
     {
