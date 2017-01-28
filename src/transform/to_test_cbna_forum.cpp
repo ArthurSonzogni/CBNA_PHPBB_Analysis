@@ -12,19 +12,24 @@ namespace {
     return std::system(("mkdir -p " + directory).c_str());
   }
 
+  void format_labels(std::vector<std::string>& labels) {
+    for(auto& label : labels)
+      for(auto& c : label)
+        c = std::tolower(c);
+  }
 
   std::map<std::string, std::vector<std::string>> topic_labels_map = {
     {"Le CBNA"                         , {"CBNA"}}        ,
-    {"Projets"                         , {"projet", "creation"}}      ,
-    {"Projets communs"                 , {"projet", "creation", "commun"}}   ,
+    {"Projets"                         , {"projet", "création"}}      ,
+    {"Projets communs"                 , {"projet", "commun", "création"}}   ,
     {"Compétitions"                    , {"compétition"}} ,
-    {"GMF: GameMaker en France"        , {}} ,
-    {"Zut"                             , {}} ,
+    {"GMF: GameMaker en France"        , {"GMF"}} ,
+    {"Zut"                             , {"Zut"}} ,
     {"Section Membres"                 , {"membres"}} ,
-    {"CBN'ART"                         , {"créations", "art"}} ,
+    {"CBN'ART"                         , {"création", "art"}} ,
     {"Section Spirituelle"             , {"débat", "partage"}} ,
-    {"Game Design"                     , {"game design"}} ,
-    {"Game Maker"                      , {"game maker"}} ,
+    {"Game Design"                     , {"game_design"}} ,
+    {"Game Maker"                      , {"game_maker"}} ,
     {"Programmation"                   , {"programmation"}} ,
     {"Entraide débutants"              , {"aide", "débutant"}} ,
     {"Entraide confirmés"              , {"aide", "confirmé"}} ,
@@ -41,6 +46,39 @@ namespace {
     if (topic_labels_map.count(section) == 0)
       std::cerr << "Warning \"" << section << "\" is not found" << std::endl;
     return topic_labels_map[section];
+  }
+
+  struct ExtractLabelResult {
+    std::string title;
+    std::vector<std::string> labels;
+  };
+
+  ExtractLabelResult extract_labels(const std::string& text) {
+    ExtractLabelResult result;
+    bool in = false;
+    std::string label;
+    for(int i = 0; i<text.size(); ++i) {
+      if (!in && text[i] == '[') {
+        in = true;
+        label = ""; 
+        continue;
+      }
+
+      if (in && text[i] == ']') {
+        in = false;
+        result.labels.push_back(label); 
+        continue;
+      }
+
+      if (in) {
+        label += text[i];
+        continue;
+      }
+
+      result.title += text[i];
+    }
+
+    return result;
   }
 }
 
@@ -93,8 +131,16 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
     topic_json["locked"] = false;
     // Quickfix, remove the first two char (0x22C2)
     // TODO(arthursonzogni): remove this once the bug is fixed.
-    topic_json["title"] = topic.title.substr(2,topic.title.size()-2);
-    topic_json["labels"] = topic_labels(topic);
+    std::string title = topic.title.substr(2,topic.title.size()-2);
+    ExtractLabelResult extract_label_result = extract_labels(title);
+    std::vector<std::string> labels = topic_labels(topic);
+    labels.insert(labels.end(),
+        extract_label_result.labels.begin(),
+        extract_label_result.labels.end());
+    format_labels(labels);
+
+    topic_json["title"] = extract_label_result.title;
+    topic_json["labels"] = labels;
 
     //-------------
     // Messages
