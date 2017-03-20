@@ -13,9 +13,12 @@ namespace {
   }
 
   void format_labels(std::vector<std::string>& labels) {
-    for(auto& label : labels)
-      for(auto& c : label)
+    for(auto& label : labels) {
+      for(auto& c : label) {
         c = std::tolower(c);
+        if (c == ' ') c = '_';
+      }
+    }
   }
 
   std::map<std::string, std::vector<std::string>> topic_labels_map = {
@@ -151,9 +154,10 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
     {
       JSON message_json;
       message_json["authors"].push_back(message.author);
-      message_json["date"] = "2016-01-01T00:00:00";
+      message_json["date"] = message.date.toString();
       message_json["content"] = message.content;
       topic_json["messages"].push_back(message_json);
+      topic_json["creation_date"] = message.date.toString();
     }
     file << std::setw(2) << topic_json;
   }

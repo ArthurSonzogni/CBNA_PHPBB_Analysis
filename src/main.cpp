@@ -42,7 +42,7 @@ int main(int argc, char** argv)
     //word_usage.print_section(file_section);
     //word_usage.print_word_to_view(file_word_to_view);
 
-    //forumCrawler.parse();
+    forumCrawler.parse();
 
     // export the forum to test.cbna
     to_test_cbna_forum(forumCrawler.raw_forum(),"cbna_forum");

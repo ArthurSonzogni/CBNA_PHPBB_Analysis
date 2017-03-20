@@ -20,7 +20,7 @@ struct Date
     void fromString(const std::string&);
     const std::string& to_string() const;
     bool operator<(const Date& other) const;
-
+    std::string toString() const;
 };
 
 #endif /* end of include guard: DATE_H */

@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 
 // Members
@@ -93,4 +94,16 @@ bool Date::operator<(const Date& other) const
     if (minute>other.minute) return false;
 
     return false;
+}
+
+std::string Date::toString() const {
+  std::stringstream ss;
+  ss << std::setfill('0') << std::setw(4) << year << "-";
+  ss << std::setfill('0') << std::setw(2) << month << "-";
+  ss << std::setfill('0') << std::setw(2) << day;
+  ss << "T";
+  ss << std::setfill('0') << std::setw(2) << hour << ":";
+  ss << std::setfill('0') << std::setw(2) << minute << ":";
+  ss << std::setfill('0') << std::setw(2) << 0;
+  return ss.str();
 }
