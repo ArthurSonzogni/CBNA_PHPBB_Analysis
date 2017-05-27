@@ -1,4 +1,4 @@
-##### Clone the project
+### Clone the project
 ```bash
 git clone https://github.com/ArthurSonzogni/CBNA_PHPBB_Analysis --recursive
 ```
