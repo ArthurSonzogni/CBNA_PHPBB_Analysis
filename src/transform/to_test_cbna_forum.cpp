@@ -130,8 +130,6 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
     std::ofstream file(topic_filename);
     JSON topic_json;
     topic_json["creation_date"] = "2016-01-01T00:00:00";
-    topic_json["draft"] = false;
-    topic_json["locked"] = false;
     // Quickfix, remove the first two char (0x22C2)
     // TODO(arthursonzogni): remove this once the bug is fixed.
     std::string title = topic.title.substr(2,topic.title.size()-2);

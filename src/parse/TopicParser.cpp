@@ -41,8 +41,8 @@ bool TopicParser::parse(const int topic_id)
         // parse post
         CSelection post = doc.find(".post");
         bool nothing_found = true;
-        for(int i = 0; i<post.nodeNum(); ++i)
-        {
+        for(int i = 0; i<post.nodeNum(); ++i) {
+            std::cout << "  Read message " << page << '\r' << std::flush;
             auto node = post.nodeAt(i);
             MessageParser message_parser;
             if (message_parser.parse(node))
@@ -52,12 +52,10 @@ bool TopicParser::parse(const int topic_id)
                 nothing_found = false;
             }
         }
-        std::cout << "Message read = " << page << '\r' << std::flush;
 
         if (nothing_found) break;
     }
-
-    return raw_topic.messages.size();
+    return !raw_topic.messages.empty();
 }
 
 bool TopicParser::parseFirstPage(CDocument& doc)

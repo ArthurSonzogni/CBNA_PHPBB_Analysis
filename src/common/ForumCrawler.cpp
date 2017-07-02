@@ -32,7 +32,6 @@ bool ForumCrawler::parse_topics()
     int fail_allowed = fail_allowed_max;
     for(int topic_id = topic_next; ; ++topic_id)
     {
-        std::cout << "Parsing topic : " << topic_id << '\r' << std::endl;
         topic_next = topic_id;
         if (topic_parser.parse(topic_id))
         {
@@ -43,7 +42,7 @@ bool ForumCrawler::parse_topics()
         }
         else
         {
-            std::cout << "Fail topic = (" << topic_id << ")" << std::endl;
+            std::cout << "Fail topic = " << topic_id << "" << std::endl;
             fail_allowed--;
             if (fail_allowed <= 0)
               break;
@@ -112,8 +111,8 @@ void ForumCrawler::save_user(int user_id)
 
 void ForumCrawler::load()
 {
-		load_users();
 		load_topics();
+		load_users();
 }
 
 void ForumCrawler::load_topics()
@@ -128,7 +127,9 @@ void ForumCrawler::load_topics()
       rawForum.topics[id].read(json);
       topic_next = std::max(topic_next,id+1);
     }
-    catch(...){} // we catch exception from std::stoi
+    catch(...){
+      std::cerr << "Fail to load " << file_name << std::endl;
+    } // we catch exception from std::stoi
 }
 
 void ForumCrawler::load_users()

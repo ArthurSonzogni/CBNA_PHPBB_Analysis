@@ -7,18 +7,21 @@
  * Published under CC0 1.0 Universal (public domain)
  */
 #include "HTTPDownloader.hpp"
+#include "./CP1252_to_UTF8.hpp"
 #include <algorithm>
+#include <chrono>
 #include <curl/curl.h>
 #include <curl/curlbuild.h>
 #include <curl/easy.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
-using namespace std;
+#include <thread>
+using namespace std::chrono_literals;
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
-    string data((const char*) ptr, (size_t) size * nmemb);
-    *((stringstream*) stream) << data << endl;
+  std::string data((const char*) ptr, (size_t) size * nmemb);
+    *((std::stringstream*) stream) << data << std::endl;
     return size * nmemb;
 }
 
@@ -28,26 +31,6 @@ HTTPDownloader::HTTPDownloader() {
 
 HTTPDownloader::~HTTPDownloader() {
     curl_easy_cleanup(curl);
-}
-
-
-#include <chrono>
-#include <thread>
-
-// This function is not part of HTTPDownloader.
-// Made by ArthurSonzogni and the answer from
-// http://stackoverflow.com/a/4059934
-static std::string to_utf8(const std::string& text)
-{
-    std::string output;
-    output.resize(2*text.size());
-    const unsigned char *in =  (unsigned char*)&text[0];
-         unsigned char *out =  (unsigned char*)&output[0];
-    while (*in)
-      if (*in<128) *out++=*in++;
-      else *out++=0xc2+(*in>0xbf), *out++=(*in++&0x3f)+0x80;
-    output.resize(out-(unsigned char*)output.c_str());
-    return output;
 }
 
 // static
@@ -66,7 +49,7 @@ void make_cookie_file()
   is_done = true;
 }
 
-string HTTPDownloader::download(const std::string& url, bool use_cookie) {
+std::string HTTPDownloader::download(const std::string& url, bool use_cookie) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
@@ -91,17 +74,12 @@ string HTTPDownloader::download(const std::string& url, bool use_cookie) {
                 curl_easy_strerror(res));
     }
 
-    // sleep for 1s
-    //std::this_thread::sleep_for (std::chrono::seconds(1));
-
- 
-    // NOTE(ArthurSonzogni)
-    // we remove every line break.
-    // I don't know why exactly.
+    // Remove new lines.
     std::string str = out.str();
     str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
 
-    // convert windows-1252 to UTF8
-    return to_utf8(str);
-}
+    std::cerr << " ... Waiting 3s ...\r" << std::flush;
+    std::this_thread::sleep_for(3s);
 
+    return CP1252_to_UTF8(str);
+}

@@ -8,13 +8,11 @@ namespace
   //--------------------------------------------
   // Parse a <tag>...</tag>
   //--------------------------------------------
-  std::string tag_other(CNode node)
-  {
+  std::string tag_other(CNode node) {
     return content(node);
   }
 
-  std::string tag_p(CNode node)
-  {
+  std::string tag_p(CNode node) {
     return content(node) + "\n\n";
   }
 
