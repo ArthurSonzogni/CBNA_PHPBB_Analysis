@@ -103,7 +103,6 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory)
     JSON user_json;
     user_json["email"] = "unknown";
     user_json["name"] = user.name;
-    user_json["nickname"] = user.name;
     user_json["avatar"] = user.avatar_url;
     user_json["is_moderator"] = false;
     user_json["is_admin"] = false;
