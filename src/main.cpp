@@ -9,7 +9,6 @@
 #include "transform/to_test_cbna_forum.hpp"
 #include "transform/to_avatar_list.hpp"
 
-
 #include <cstdlib> // system()
 
 std::ofstream

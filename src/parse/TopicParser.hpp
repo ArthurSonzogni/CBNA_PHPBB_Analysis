@@ -1,23 +1,25 @@
 #ifndef TOPICPARSER_H
 #define TOPICPARSER_H
 
+#include "MessageParser.hpp"
 #include "data/raw/RawTopic.hpp"
 #include "gumbo-query/src/Document.h"
 
-class TopicParser
-{
-    public:
-        TopicParser(const std::string& website);
-        bool parse(const int topic_id);
-        RawTopic toRaw();
+class HtmlToMarkdown;
 
-        void reload(const std::string& directory);
-    private:
-        const std::string website;
-        RawTopic raw_topic;
+class TopicParser {
+ public:
+  TopicParser(const std::string& website);
+  bool parse(const int topic_id);
+  RawTopic toRaw();
 
-        bool parseFirstPage(CDocument& doc);
-        
+  void reload(const std::string& directory);
+
+ private:
+  const std::string website;
+  RawTopic raw_topic;
+
+  bool parseFirstPage(CDocument& doc);
 };
 
 #endif /* end of include guard: TOPICPARSER_H */

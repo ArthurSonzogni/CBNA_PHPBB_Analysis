@@ -1,8 +1,8 @@
 #include "MessageParser.hpp"
-#include "HTMLToMarkdown.h"
+#include "gumbo-query/src/Document.h"
 #include "gumbo-query/src/Selection.h"
 
-bool MessageParser::parse(CNode &post) {
+bool MessageParser::parse(const std::string& document, CNode& post) {
   // parse author
   CSelection author = post.find("span.name > strong > a");
   if (author.nodeNum() == 0)
@@ -16,17 +16,24 @@ bool MessageParser::parse(CNode &post) {
   CSelection message = post.find(".postbody > div");
   if (message.nodeNum() < 1)
     return false;
-  rawMessage.content = HTMLToMarkdown(message.nodeAt(0));
+
+  CNode message_node = message.nodeAt(0);
+  rawMessage.content = document.substr(
+      message_node.startPosOuter(),
+      message_node.endPosOuter() - message_node.startPosOuter());
 
   // parse date
   // TODO(arthur)
   CSelection date = post.find(".postdetails");
-  if (date.nodeNum() >= 2)
+  if (date.nodeNum() >= 2) {
     if (date.nodeAt(1).childNum() >= 4) {
       rawMessage.date.fromString(date.nodeAt(1).childAt(3).text());
     }
+  }
 
   return true;
 }
 
-RawMessage MessageParser::toRaw() { return rawMessage; }
+RawMessage MessageParser::toRaw() {
+  return rawMessage;
+}

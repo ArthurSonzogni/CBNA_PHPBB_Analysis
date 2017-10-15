@@ -3,32 +3,33 @@
 
 #include "data/raw/RawForum.hpp"
 
-class ForumCrawler
-{
-public:
-    ForumCrawler(const std::string& website,
-                 const std::string& save_dir);
+class HtmlToMarkdown;
 
-    bool parse();
-    void load();
+class ForumCrawler {
+ public:
+  ForumCrawler(const std::string& website,
+               const std::string& save_dir);
 
-    const RawForum& raw_forum();
-private:
+  bool parse();
+  void load();
 
-		void load_users();
-		void load_topics();
-    bool parse_users();
-    bool parse_topics();
-    void save();
-    void save_user(int user_id);
-    void save_topic(int topic_id);
+  const RawForum& raw_forum();
 
-    RawForum rawForum;
+ private:
+  void load_users();
+  void load_topics();
+  bool parse_users();
+  bool parse_topics();
+  void save();
+  void save_user(int user_id);
+  void save_topic(int topic_id);
 
-    std::string website;
-    std::string save_dir;
-		int topic_next = 0;
-		int user_next = 1;
+  RawForum rawForum;
+
+  std::string website;
+  std::string save_dir;
+  int topic_next = 0;
+  int user_next = 1;
 };
 
 #endif /* end of include guard: FORUMCRAWLER_HPP */
