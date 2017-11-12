@@ -155,11 +155,11 @@ void to_test_cbna_forum(const RawForum& forum, const std::string& directory) {
       message_content.parse(message.content);
       CNode message_content_node = message_content.find("div").nodeAt(0);
       message_json["content"] = html_to_markdown(message_content_node);
-      std::cout << "content = " << html_to_markdown(message_content_node)
-                << std::endl;
       topic_json["messages"].push_back(message_json);
       topic_json["creation_date"] = message.date.toString();
     }
     file << std::setw(2) << topic_json;
   }
+
+  html_to_markdown.PrintEmojiNotFound();
 }

@@ -7,6 +7,8 @@ class CbnaHtmlToMarkdown : public HtmlToMarkdown {
  public:
   CbnaHtmlToMarkdown();
   virtual ~CbnaHtmlToMarkdown() = default;
+
+  void PrintEmojiNotFound();
 };
 
 #endif /* end of include guard: CBNAHTMLTOMARKDOWN_H */

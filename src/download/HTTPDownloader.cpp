@@ -41,7 +41,7 @@ void make_cookie_file()
     return;
   while (!std::ifstream("./cookie.txt").good()) {
     std::cerr << "Please place a cookie file named \"cookie.txt\" in the current directory" << std::endl;
-    std::cerr << R"(Download the cookies.txt from the Chrome Extension (https://chrome.google.com/webstore/detail/njabckikapfpffapmjgojcnbfjonfjfg))" << std::endl;
+    std::cerr << R"(Download the cookie.txt from the Chrome Extension (https://chrome.google.com/webstore/detail/njabckikapfpffapmjgojcnbfjonfjfg))" << std::endl;
     std::string value;
     std::cout << "Done ?";
     std::cin >> value;
@@ -50,19 +50,23 @@ void make_cookie_file()
 }
 
 std::string HTTPDownloader::download(const std::string& url, bool use_cookie) {
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
-    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "deflate");
-    std::stringstream out;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 100);
-    curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+  curl_easy_setopt(
+      curl, CURLOPT_NOSIGNAL,
+      1);  // Prevent "longjmp causes uninitialized stack frame" bug
+  curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "deflate");
+  std::stringstream out;
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+  curl_easy_setopt(curl, CURLOPT_TIMEOUT, 100);
+  curl_easy_setopt(curl, CURLOPT_USERAGENT,
+                   "Mozilla/5.0 (compatible; Googlebot/2.1; "
+                   "+http://www.google.com/bot.html)");
 
-    if (use_cookie) {
-      make_cookie_file();
-      curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "./cookieFile.txt");
+  if (use_cookie) {
+    make_cookie_file();
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "./cookie.txt");
     }
 
 
@@ -80,6 +84,8 @@ std::string HTTPDownloader::download(const std::string& url, bool use_cookie) {
 
     std::cerr << " ... Waiting 3s ...\r" << std::flush;
     std::this_thread::sleep_for(3s);
+
+    std::ofstream("index.html") << CP1252_to_UTF8(str);
 
     return CP1252_to_UTF8(str);
 }

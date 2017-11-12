@@ -29,6 +29,7 @@ int main(int argc, char** argv)
 
     ForumCrawler forumCrawler(website, save_dir);
     forumCrawler.load();
+    forumCrawler.parse();
 
     //auto time_stat = to_time_stat(forumCrawler.raw_forum());
     //time_stat.print_summary(std::cout);
@@ -41,7 +42,6 @@ int main(int argc, char** argv)
     //word_usage.print_section(file_section);
     //word_usage.print_word_to_view(file_word_to_view);
 
-    forumCrawler.parse();
 
     // export the forum to test.cbna
     to_test_cbna_forum(forumCrawler.raw_forum(),"cbna_forum");

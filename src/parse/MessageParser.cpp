@@ -2,27 +2,33 @@
 #include "gumbo-query/src/Document.h"
 #include "gumbo-query/src/Selection.h"
 
-bool MessageParser::parse(const std::string& document, CNode& post) {
-  // parse author
-  CSelection author = post.find("span.name > strong > a");
-  if (author.nodeNum() == 0)
-    return false;
-  std::string author_href = author.nodeAt(0).attribute("href");
-  if (author_href.size() <= 2)
-    return false;
-  rawMessage.author = std::stoi(author_href.substr(2, std::string::npos));
+#include <iostream>
 
-  // parse message
+bool MessageParser::parse(const std::string& document, CNode& post) {
+
+  // Parse message.
   CSelection message = post.find(".postbody > div");
-  if (message.nodeNum() < 1)
+  if (message.nodeNum() < 1) {
     return false;
+  }
 
   CNode message_node = message.nodeAt(0);
   rawMessage.content = document.substr(
       message_node.startPosOuter(),
       message_node.endPosOuter() - message_node.startPosOuter());
 
-  // parse date
+  // Parse author.
+  CSelection author = post.find("span.name > strong > a");
+  if (author.nodeNum() == 0) {
+    return false;
+  }
+  std::string author_href = author.nodeAt(0).attribute("href");
+  if (author_href.size() <= 2) {
+    return false;
+  }
+  rawMessage.author = std::stoi(author_href.substr(2, std::string::npos));
+
+  // Parse date.
   // TODO(arthur)
   CSelection date = post.find(".postdetails");
   if (date.nodeNum() >= 2) {

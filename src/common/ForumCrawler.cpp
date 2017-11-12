@@ -14,6 +14,7 @@ ForumCrawler::ForumCrawler(const std::string& website,
 
 bool ForumCrawler::parse() {
   return parse_topics() && parse_users() && true;
+  //return true;
 }
 
 bool ForumCrawler::parse_topics() {
@@ -22,9 +23,9 @@ bool ForumCrawler::parse_topics() {
 
   int fail_allowed_max = 500;
   int fail_allowed = fail_allowed_max;
-  for (int topic_id = topic_next;; ++topic_id) {
-  while(topic_next != 10145)
-    topic_next = topic_id;
+  while (true) {
+    int topic_id = topic_next;
+    topic_next = topic_id + 1;
     if (topic_parser.parse(topic_id)) {
       found_something = true;
       rawForum.topics[topic_id] = topic_parser.toRaw();
@@ -36,6 +37,7 @@ bool ForumCrawler::parse_topics() {
       if (fail_allowed <= 0)
         break;
     }
+    topic_id++;
   }
   return found_something;
 }
@@ -46,7 +48,9 @@ bool ForumCrawler::parse_users() {
 
   int fail_allowed_max = 500;
   int fail_allowed = fail_allowed_max;
-  for (int user_id = user_next;; ++user_id) {
+
+  while (true) {
+    int user_id = user_next;
     user_next = user_id + 1;
     if (user_parser.parse(user_id)) {
       found_something = true;

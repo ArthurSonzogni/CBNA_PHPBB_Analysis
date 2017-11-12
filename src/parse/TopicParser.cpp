@@ -66,7 +66,6 @@ bool TopicParser::parseFirstPage(CDocument& doc) {
   CSelection path = doc.find("a.nav span");
   raw_topic.path.clear();
   for (int j = 0; j < path.nodeNum(); ++j) {
-    // std::cout << j << path.nodeAt(j).text() << std::endl;
     raw_topic.path.push_back(path.nodeAt(j).text());
     if (j >= 2)
       break;
